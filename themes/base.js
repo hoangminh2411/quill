@@ -30,11 +30,11 @@ class BaseTheme extends Theme {
   constructor(quill, options) {
     super(quill, options);
     let listener = (e) => {
-      if (!document.body.contains(quill.root)) {
-        return document.body.removeEventListener('click', listener);
+      if (!quill.context.contains(quill.root)) {
+        return quill.context.removeEventListener('click', listener);
       }
       if (this.tooltip != null && !this.tooltip.root.contains(e.target) &&
-          document.activeElement !== this.tooltip.textbox && !this.quill.hasFocus()) {
+          this.quill.context.activeElement !== this.tooltip.textbox && !this.quill.hasFocus()) {
         this.tooltip.hide();
       }
       if (this.pickers != null) {
@@ -45,7 +45,7 @@ class BaseTheme extends Theme {
         });
       }
     };
-    quill.emitter.listenDOM('click', document.body, listener);
+    quill.emitter.listenDOM('click', quill.context, listener);
   }
 
   addModule(name) {

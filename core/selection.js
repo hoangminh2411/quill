@@ -22,6 +22,7 @@ class Selection {
     this.composing = false;
     this.mouseDown = false;
     this.root = this.scroll.domNode;
+    this.context = this.getContext();
     this.cursor = Parchment.create('cursor', this);
     // savedRange is last non-null range
     this.lastRange = this.savedRange = new Range(0, 0);
@@ -58,6 +59,22 @@ class Selection {
     this.update(Emitter.sources.SILENT);
   }
 
+  getContext() {
+    // const supportsShadowDOM = !!HTMLElement.prototype.attachShadow;
+    let ctx = document;
+    if (typeof HTMLElement.prototype.attachShadow === 'function') {
+      let el = this.root.parentNode;
+      while (!(el === document || el instanceof ShadowRoot)) {
+        el = el.parentNode;
+      }
+      // HACK: if the ShadowRoot doesn't support getSelection then the browser should allow selection
+      // to pass through the ShadowDOM boundary - use document
+      ctx = el instanceof ShadowRoot && typeof el.getSelection === 'function' ? el : document;
+    }
+    debug.info('getContext', ctx);
+    return ctx;
+  }
+
   handleComposition() {
     this.root.addEventListener('compositionstart', () => {
       this.composing = true;
@@ -75,10 +92,10 @@ class Selection {
   }
 
   handleDragging() {
-    this.emitter.listenDOM('mousedown', document.body, () => {
+    this.emitter.listenDOM('mousedown', this.context, () => {
       this.mouseDown = true;
     });
-    this.emitter.listenDOM('mouseup', document.body, () => {
+    this.emitter.listenDOM('mouseup', this.context, () => {
       this.mouseDown = false;
       this.update(Emitter.sources.USER);
     });
@@ -157,7 +174,7 @@ class Selection {
   }
 
   getNativeRange() {
-    let selection = document.getSelection();
+    let selection = this.context.getSelection();
     if (selection == null || selection.rangeCount <= 0) return null;
     let nativeRange = selection.getRangeAt(0);
     if (nativeRange == null) return null;
@@ -174,7 +191,7 @@ class Selection {
   }
 
   hasFocus() {
-    return document.activeElement === this.root;
+    return this.context.activeElement === this.root || contains(this.root, this.context.activeElement);
   }
 
   normalizedToRange(range) {
@@ -268,7 +285,7 @@ class Selection {
     if (startNode != null && (this.root.parentNode == null || startNode.parentNode == null || endNode.parentNode == null)) {
       return;
     }
-    let selection = document.getSelection();
+    let selection = this.context.getSelection();
     if (selection == null) return;
     if (startNode != null) {
       if (!this.hasFocus()) this.root.focus();

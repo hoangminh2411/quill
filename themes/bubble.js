@@ -64,7 +64,7 @@ class BubbleTooltip extends BaseTooltip {
           let bounds = this.quill.getBounds(new Range(index, length));
           this.position(bounds);
         }
-      } else if (document.activeElement !== this.textbox && this.quill.hasFocus()) {
+      } else if (this.quill.context.activeElement !== this.textbox && this.quill.hasFocus()) {
         this.hide();
       }
     });

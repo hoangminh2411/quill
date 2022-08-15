@@ -72,6 +72,7 @@ class Quill {
     this.root = this.addContainer('ql-editor');
     this.root.classList.add('ql-blank');
     this.root.setAttribute('data-gramm', false);
+    this.context = this.getContext();
     this.scrollingContainer = this.options.scrollingContainer || this.root;
     this.emitter = new Emitter();
     this.scroll = Parchment.create(this.root, {
@@ -106,6 +107,22 @@ class Quill {
     if (this.options.readOnly) {
       this.disable();
     }
+  }
+
+  getContext() {
+    // const supportsShadowDOM = !!HTMLElement.prototype.attachShadow;
+    let ctx = document;
+    if (typeof HTMLElement.prototype.attachShadow === 'function') {
+      let el = this.root.parentNode;
+      while (!(el === document || el instanceof ShadowRoot)) {
+        el = el.parentNode;
+      }
+      // HACK: if the ShadowRoot doesn't support getSelection then the browser should allow selection
+      // to pass through the ShadowDOM boundary - use document
+      ctx = el instanceof ShadowRoot && typeof el.getSelection === 'function' ? el : document;
+    }
+    debug.info('getContext', ctx);
+    return ctx;
   }
 
   addContainer(container, refNode = null) {
