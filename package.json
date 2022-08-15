@@ -37,7 +37,8 @@
     "eventemitter3": "^3.1.0",
     "extend": "^3.0.1",
     "parchment": "2.0.0-dev.0",
-    "quill-delta": "^3.6.2"
+    "quill-delta": "^3.6.2",
+    "shadow-selection-polyfill": "^1.1.0"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",

@@ -1,9 +1,11 @@
 import EventEmitter from 'eventemitter3';
+import { SHADOW_SELECTIONCHANGE } from 'shadow-selection-polyfill';
 import instances from './instances';
 import logger from './logger';
 
 const debug = logger('quill:events');
-const EVENTS = ['selectionchange', 'mousedown', 'mouseup', 'click'];
+
+const EVENTS = [SHADOW_SELECTIONCHANGE, 'mousedown', 'mouseup', 'click'];
 
 const attachedContexts = new Set();
 
