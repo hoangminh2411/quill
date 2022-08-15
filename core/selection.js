@@ -27,7 +27,7 @@ class Selection {
     this.lastRange = this.savedRange;
     this.handleComposition();
     this.handleDragging();
-    this.emitter.listenDOM('selectionchange', document, () => {
+    this.emitter.listenDOM('selectionchange', this.context, () => {
       if (!this.mouseDown) {
         setTimeout(this.update.bind(this, Emitter.sources.USER), 1);
       }
@@ -207,7 +207,7 @@ class Selection {
   hasFocus() {
     return (
       this.context.activeElement === this.root ||
-      contains(this.root, document.activeElement)
+      contains(this.root, this.context.activeElement)
     );
   }
 

@@ -81,7 +81,7 @@ class Quill {
     this.root.setAttribute('data-gramm', false);
     this.context = this.getContext();
     this.scrollingContainer = this.options.scrollingContainer || this.root;
-    this.emitter = new Emitter();
+    this.emitter = new Emitter(this.context);
     const ScrollBlot = this.options.registry.query(
       Parchment.ScrollBlot.blotName,
     );

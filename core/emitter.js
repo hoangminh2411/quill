@@ -5,22 +5,29 @@ import logger from './logger';
 const debug = logger('quill:events');
 const EVENTS = ['selectionchange', 'mousedown', 'mouseup', 'click'];
 
-EVENTS.forEach(eventName => {
-  document.addEventListener(eventName, (...args) => {
-    Array.from(document.querySelectorAll('.ql-container')).forEach(node => {
-      const quill = instances.get(node);
-      if (quill && quill.emitter) {
-        quill.emitter.handleDOM(...args);
-      }
+const attachedContexts = new Set();
+
+function ensureListenersOnContext(context) {
+  if (attachedContexts.has(context)) return;
+
+  EVENTS.forEach(eventName => {
+    context.addEventListener(eventName, (...args) => {
+      Array.from(context.querySelectorAll('.ql-container')).forEach(node => {
+        const quill = instances.get(node);
+        if (quill && quill.emitter) {
+          quill.emitter.handleDOM(...args);
+        }
+      });
     });
   });
-});
+}
 
 class Emitter extends EventEmitter {
-  constructor() {
+  constructor(context) {
     super();
     this.listeners = {};
     this.on('error', debug.error);
+    ensureListenersOnContext(context);
   }
 
   emit(...args) {
