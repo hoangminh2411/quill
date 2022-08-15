@@ -1,3 +1,7 @@
+# 2.0.0
+
+In progress. Please see the [Upgrading to 2.0](http://quilljs.com/guides/upgrading-to-2-0/) guide.
+
 # 1.3.7
 
 Security related bug fixes.
@@ -6,7 +10,6 @@ Security related bug fixes.
 - https://www.npmjs.com/advisories/1039
 
 Thank you [@danfuzz](https://github.com/danfuzz), [@danielw93](https://github.com/danielw93), [@jonathanlloyd](https://github.com/jonathanlloyd), and [@k-sai-kiranmayee](https://github.com/k-sai-kiranmayee) for your contributions to this release.
-
 
 # 1.3.6
 

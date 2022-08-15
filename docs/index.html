@@ -39,7 +39,7 @@ redirect_from: /latest/
           <a class="user-slack" href="https://slack.com/" target="_blank" title="Slack"></a>
         </li>
         <li>
-          <a class="user-voxmedia" href="https://www.voxmedia.com/" target="_blank" title="Vox Media"></a>
+          <a class="user-slab" href="https://www.slab.com/" target="_blank" title="Slab"></a>
         </li>
       </ul>
     </div>
@@ -207,7 +207,6 @@ redirect_from: /latest/
     var bubbleEditor = new Quill('#bubble-container .editor', {
       bounds: '#bubble-container .editor',
       modules: {
-        'formula': true,
         'syntax': true
       },
       theme: 'bubble'
@@ -216,7 +215,6 @@ redirect_from: /latest/
     var snowEditor = new Quill('#snow-container .editor', {
       bounds: '#snow-container .editor',
       modules: {
-        'formula': true,
         'syntax': true,
         'toolbar': '#snow-container .toolbar'
       },
@@ -226,7 +224,6 @@ redirect_from: /latest/
     var fullEditor = new Quill('#full-container .editor', {
       bounds: '#full-container .editor',
       modules: {
-        'formula': true,
         'syntax': true,
         'toolbar': [
           [{ 'font': fonts }, { 'size': [] }],
@@ -235,7 +232,7 @@ redirect_from: /latest/
           [{ 'script': 'super' }, { 'script': 'sub' }],
           [{ 'header': '1' }, { 'header': '2' }, 'blockquote', 'code-block' ],
           [{ 'list': 'ordered' }, { 'list': 'bullet'}, { 'indent': '-1' }, { 'indent': '+1' }],
-          [ 'direction', { 'align': [] }],
+          [ {'direction': 'rtl'}, { 'align': [] }],
           [ 'link', 'image', 'video', 'formula' ],
           [ 'clean' ]
         ],
@@ -265,25 +262,21 @@ redirect_from: /latest/
     });
 
     var users = [{
-      'Intuit': 'https://www.intuit.com/',
       'LinkedIn': 'https://www.linkedin.com/',
       'Microsoft': 'https://www.microsoft.com/',
       'Salesforce': 'https://www.salesforce.com/',
       'Slack': 'https://slack.com/',
     }, {
-      'Asana': 'https://asana.com/',
-      'Gannett': 'http://www.gannett.com/',
+      'Airtable': 'https://airtable.com/',
+      'Grammarly': 'https://www.grammarly.com/',
       'Gusto': 'https://www.gusto.com/',
-      'Hubspot': 'https://www.hubspot.com/',
-      'Mode Analytics': 'https://modeanalytics.com/',
-      'USA Today': 'https://www.usatoday.com/',
+      'Lever': 'https://www.lever.co/',
+      'Vox Media': 'https://www.voxmedia.com/',
     }, {
       'Buffer': 'https://buffer.com/',
       'Front': 'https://frontapp.com/',
-      'Lever': 'https://www.lever.co/',
       'Reedsy': 'https://reedsy.com/',
       'Slab': 'https://slab.com/',
-      'Vox Media': 'https://www.voxmedia.com/'
     }];
     // Show users randomly
     $('#users-container a').each(function(i, link) {
