@@ -2,15 +2,8 @@ import Inline from '../blots/inline';
 
 class Link extends Inline {
   static create(value) {
-<<<<<<< HEAD
-    let node = super.create(value);
-    value = this.sanitize(value);
-    node.setAttribute('href', value);
-    node.setAttribute('rel', 'noopener noreferrer');
-=======
     const node = super.create(value);
     node.setAttribute('href', this.sanitize(value));
->>>>>>> 8eeed058c5e297ba19ca1de933b71978b9c5dfa0
     node.setAttribute('target', '_blank');
     return node;
   }

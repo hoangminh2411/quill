@@ -1,7 +1,7 @@
 class Tooltip {
   constructor(quill, boundsContainer) {
     this.quill = quill;
-    this.boundsContainer = boundsContainer || quill.context;
+    this.boundsContainer = boundsContainer || document.body;
     this.root = quill.addContainer('ql-tooltip');
     this.root.innerHTML = this.constructor.TEMPLATE;
     if (this.quill.root === this.quill.scrollingContainer) {

@@ -134,7 +134,10 @@ class Quill {
       }
       // HACK: if the ShadowRoot doesn't support getSelection then the browser should allow selection
       // to pass through the ShadowDOM boundary - use document
-      ctx = el instanceof ShadowRoot && typeof el.getSelection === 'function' ? el : document;
+      ctx =
+        el instanceof ShadowRoot && typeof el.getSelection === 'function'
+          ? el
+          : document;
     }
     debug.info('getContext', ctx);
     return ctx;

@@ -34,15 +34,9 @@
   "dependencies": {
     "clone": "^2.1.1",
     "deep-equal": "^1.0.1",
-<<<<<<< HEAD
-    "eventemitter3": "^2.0.3",
-    "extend": "^3.0.2",
-    "parchment": "^1.1.4",
-=======
     "eventemitter3": "^3.1.0",
     "extend": "^3.0.1",
     "parchment": "2.0.0-dev.0",
->>>>>>> 8eeed058c5e297ba19ca1de933b71978b9c5dfa0
     "quill-delta": "^3.6.2"
   },
   "devDependencies": {
