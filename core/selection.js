@@ -1,8 +1,12 @@
-import { ContainerBlot, LeafBlot, Scope } from 'parchment';
+import { LeafBlot, Scope } from 'parchment';
 import clone from 'clone';
 import equal from 'deep-equal';
 import Emitter from './emitter';
 import logger from './logger';
+import { ShadowSelection } from './shadow-selection-polyfill';
+
+// Based on:
+// https://raw.githubusercontent.com/nuxeo/quill/2.0.0-NX/core/selection.js
 
 const debug = logger('quill:selection');
 
@@ -28,23 +32,38 @@ class Selection {
     this.handleComposition();
     this.handleDragging();
     this.emitter.listenDOM('selectionchange', this.context, () => {
-      if (!this.mouseDown) {
+      if (!this.mouseDown && !this.composing) {
         setTimeout(this.update.bind(this, Emitter.sources.USER), 1);
       }
     });
-    this.emitter.on(Emitter.events.SCROLL_BEFORE_UPDATE, () => {
+    this.emitter.on(Emitter.events.SCROLL_BEFORE_UPDATE, (_, mutations) => {
       if (!this.hasFocus()) return;
       const native = this.getNativeRange();
       if (native == null) return;
+      // We might need to hack the offset on Safari, when we are dealing with the first character of a row.
+      // This likely happens because of a race condition between quill's update method being called before the
+      // selectionchange event being fired in the selection polyfill.
+      const hackOffset =
+        native.start.offset === 0 &&
+        native.start.offset === native.end.offset &&
+        this.context.getSelection() instanceof ShadowSelection &&
+        mutations.some(a => a.type === 'characterData' && a.oldValue === '')
+          ? 1
+          : 0;
       if (native.start.node === this.cursor.textNode) return; // cursor.restore() will handle
       this.emitter.once(Emitter.events.SCROLL_UPDATE, () => {
         try {
-          this.setNativeRange(
-            native.start.node,
-            native.start.offset,
-            native.end.node,
-            native.end.offset,
-          );
+          if (
+            this.root.contains(native.start.node) &&
+            this.root.contains(native.end.node)
+          ) {
+            this.setNativeRange(
+              native.start.node,
+              native.start.offset + hackOffset,
+              native.end.node,
+              native.end.offset + hackOffset,
+            );
+          }
           this.update(Emitter.sources.SILENT);
         } catch (ignored) {
           // ignore
@@ -59,6 +78,29 @@ class Selection {
       }
     });
     this.update(Emitter.sources.SILENT);
+  }
+
+  handleComposition() {
+    this.root.addEventListener('compositionstart', () => {
+      this.composing = true;
+      this.scroll.batchStart();
+    });
+    this.root.addEventListener('compositionend', () => {
+      this.scroll.batchEnd();
+      this.composing = false;
+      if (this.cursor.parent) {
+        const range = this.cursor.restore();
+        if (!range) return;
+        setTimeout(() => {
+          this.setNativeRange(
+            range.startNode,
+            range.startOffset,
+            range.endNode,
+            range.endOffset,
+          );
+        }, 1);
+      }
+    });
   }
 
   getContext() {
@@ -80,32 +122,11 @@ class Selection {
     return ctx;
   }
 
-  handleComposition() {
-    this.root.addEventListener('compositionstart', () => {
-      this.composing = true;
-    });
-    this.root.addEventListener('compositionend', () => {
-      this.composing = false;
-      if (this.cursor.parent) {
-        const range = this.cursor.restore();
-        if (!range) return;
-        setTimeout(() => {
-          this.setNativeRange(
-            range.startNode,
-            range.startOffset,
-            range.endNode,
-            range.endOffset,
-          );
-        }, 1);
-      }
-    });
-  }
-
   handleDragging() {
-    this.emitter.listenDOM('mousedown', this.context, () => {
+    this.emitter.listenDOM('mousedown', document.body, () => {
       this.mouseDown = true;
     });
-    this.emitter.listenDOM('mouseup', this.context, () => {
+    this.emitter.listenDOM('mouseup', document.body, () => {
       this.mouseDown = false;
       this.update(Emitter.sources.USER);
     });
@@ -222,10 +243,11 @@ class Selection {
       const index = blot.offset(this.scroll);
       if (offset === 0) {
         return index;
-      } else if (blot instanceof ContainerBlot) {
-        return index + blot.length();
       }
-      return index + blot.index(node, offset);
+      if (blot instanceof LeafBlot) {
+        return index + blot.index(node, offset);
+      }
+      return index + blot.length();
     });
     const end = Math.min(Math.max(...indexes), this.scroll.length() - 1);
     const start = Math.min(end, ...indexes);
@@ -394,7 +416,15 @@ class Selection {
         nativeRange.native.collapsed &&
         nativeRange.start.node !== this.cursor.textNode
       ) {
-        this.cursor.restore();
+        const range = this.cursor.restore();
+        if (range) {
+          this.setNativeRange(
+            range.startNode,
+            range.startOffset,
+            range.endNode,
+            range.endOffset,
+          );
+        }
       }
       const args = [
         Emitter.events.SELECTION_CHANGE,
