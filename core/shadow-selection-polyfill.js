@@ -33,6 +33,10 @@ export class ShadowSelection {
 
   removeAllRanges() {
     this.ranges = [];
+    if (!processing) {
+      const windowSel = window.getSelection();
+      windowSel.removeAllRanges();
+    }
   }
 
   // todo: implement remaining `Selection` methods and properties.
