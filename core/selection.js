@@ -31,7 +31,7 @@ class Selection {
     this.lastRange = this.savedRange;
     this.handleComposition();
     this.handleDragging();
-    this.emitter.listenDOM('selectionchange', this.context, () => {
+    this.emitter.listenDOM('selectionchange', document, () => {
       if (!this.mouseDown && !this.composing) {
         setTimeout(this.update.bind(this, Emitter.sources.USER), 1);
       }

@@ -12,7 +12,13 @@ function ensureListenersOnContext(context) {
   if (attachedContexts.has(context)) return;
 
   EVENTS.forEach(eventName => {
-    context.addEventListener(eventName, (...args) => {
+    let target = context;
+
+    if (eventName === 'selectionchange') {
+      target = document;
+    }
+
+    target.addEventListener(eventName, (...args) => {
       Array.from(context.querySelectorAll('.ql-container')).forEach(node => {
         const quill = instances.get(node);
         if (quill && quill.emitter) {
