@@ -63,21 +63,21 @@ class Selection {
 
   getContext() {
     // const supportsShadowDOM = !!HTMLElement.prototype.attachShadow;
-    let ctx = document;
-    if (typeof HTMLElement.prototype.attachShadow === 'function') {
-      let el = this.root.parentNode;
-      while (!(el === document || el instanceof ShadowRoot)) {
-        el = el.parentNode;
-      }
-      // HACK: if the ShadowRoot doesn't support getSelection then the browser should allow selection
-      // to pass through the ShadowDOM boundary - use document
-      ctx =
-        el instanceof ShadowRoot && typeof el.getSelection === 'function'
-          ? el
-          : document;
-    }
-    debug.info('getContext', ctx);
-    return ctx;
+    // let ctx = document;
+    // if (typeof HTMLElement.prototype.attachShadow === 'function') {
+    //   let el = this.root.parentNode;
+    //   while (!(el === document || el instanceof ShadowRoot)) {
+    //     el = el.parentNode;
+    //   }
+    //   // HACK: if the ShadowRoot doesn't support getSelection then the browser should allow selection
+    //   // to pass through the ShadowDOM boundary - use document
+    //   ctx =
+    //     el instanceof ShadowRoot && typeof el.getSelection === 'function'
+    //       ? el
+    //       : document;
+    // }
+    // debug.info('getContext', ctx);
+    return this.root.ownerDocument;
   }
 
   handleComposition() {
