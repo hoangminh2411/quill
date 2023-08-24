@@ -152,7 +152,7 @@ class Selection {
     let [leaf, offset] = this.scroll.leaf(index);
     if (leaf == null) return null;
     [node, offset] = leaf.position(offset, true);
-    const range = document.createRange();
+    const range = this.context.createRange();
     if (length > 0) {
       range.setStart(node, offset);
       [leaf, offset] = this.scroll.leaf(index + length);
@@ -353,7 +353,7 @@ class Selection {
           );
           endNode = endNode.parentNode;
         }
-        const range = document.createRange();
+        const range = this.context.createRange();
         range.setStart(startNode, startOffset);
         range.setEnd(endNode, endOffset);
         selection.removeAllRanges();
