@@ -8,7 +8,7 @@ import Selection, { Range } from './selection';
 import instances from './instances';
 import logger from './logger';
 import Theme from './theme';
-
+// uptest
 const debug = logger('quill');
 
 const globalRegistry = new Parchment.Registry();
