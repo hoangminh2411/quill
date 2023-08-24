@@ -146,7 +146,7 @@ class Quill {
   addContainer(container, refNode = null) {
     if (typeof container === 'string') {
       const className = container;
-      container = document.createElement('div');
+      container = this.context.createElement('div');
       container.classList.add(className);
     }
     this.container.insertBefore(container, refNode);
@@ -537,7 +537,7 @@ function expandConfig(container, userConfig) {
   );
   ['bounds', 'container', 'scrollingContainer'].forEach(key => {
     if (typeof userConfig[key] === 'string') {
-      userConfig[key] = document.querySelector(userConfig[key]);
+      userConfig[key] = this.context.querySelector(userConfig[key]);
     }
   });
   userConfig.modules = Object.keys(userConfig.modules).reduce(
